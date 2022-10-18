@@ -1,0 +1,266 @@
+=== *Отчёт по лабораторной работе 3*
+
+Студент: Курочкин Е. А.
+
+Группа: ПИМ-22
+
+==== 1. Постановка задачи
+
+. ООП. 
+    .. Создать интерфейс.
+    .. Создать абстрактный класс.
+    .. Создать класс, имплементирующий интерфейс.
+    .. Создать класс-наследник абстрактного класса.
+
+. Reflection
+    .. Выгрузить все поля и методы класса с помощью рефлексии.
+    .. Вызвать несколько методов класса.
+    .. Вывести на экран всех предков класса.
+
+. Collections
+    .. Ознакомится со всеми коллекциями java (list, set, map) и их реализацией.
+    .. Продемонстрировать в программе работу с каждым видом реализации коллекции (list, set, map).
+
+. Generics
+    .. Сделать дженерик на класс.
+    .. Сделать дженерик на метод.
+
+==== 2. Структура проекта
+
+Проект разделён на следующие директории
+
+. *src* - папка, в которой находятся _.java_ файлы
+. *out.production.lab3* - папка, в которой находятся _.class_ файлы
+
+
+==== 3. Выполнение задания
+
+. ООП.
+    .. Был создан интерфейс под названием _Human_:
+[source,java]
+    public interface Human {
+    public void showAge(int x);
+    public void showEducation(String s);
+    public void showGroup(String n);
+    public void showUniversity(String u);
+}
+
+    .. Был создан абстрактный класс под названием _Transport_:
+[source,java]
+public abstract class Transport {
+    public abstract void makeSound();
+    public abstract void showName();
+    public void responsible(){
+        System.out.println("shovel");
+    }
+}
+
+
+    .. Класс _Student_, имплементирующий интерфейс _Human_:
+[source,java]
+public class Student implements Human{
+    public void showAge(int x) {
+        System.out.println(x);
+    }
+    public void showEducation(String s) {
+        System.out.println(s);
+    }
+    public void showGroup(String n) {
+        System.out.println(n);
+    }
+    public void showUniversity(String u){
+        System.out.println(u);
+    }
+    public void showInfo(int x, String s,String n, String u){
+        showAge(x);
+        showEducation(s);
+        showGroup(n);
+        showUniversity(u);
+    }
+}
+    .. Класс _Tractor_ - наследник класса _Transport_:
+[source,java]
+public class Tractor extends Transport{
+    public void makeSound(){
+        System.out.println("Trtrtrtrtrtr");
+    }
+    public void showName() {
+        System.out.println("Tractor");
+
+    }
+}
+
+    .. Класс _Main_ показывающий работу классов, описанных выше
+[source,java]
+public class Main {
+    public static void main(String[] args){
+        Student st = new Student();
+        st.showInfo(22, "Magistracy","ПИМ-22", "RSATU");
+        Tractor tr = new Tractor();
+        System.out.print("Red ");
+        tr.showName();
+        tr.makeSound();
+        tr.responsible();
+
+        Reflect.dumpEverything(tr.getClass().getName());
+        Reflect.dumpEverything(tr.getClass().getSuperclass().getName());
+    }
+}
+
+    .. Результат работы:
+[source]
+22
+Magistracy
+ПИМ-22
+RSATU
+Red Tractor
+Trtrtrtrtrtr
+shovel
+
+. Reflection
+    .. Был создан класс _Reflect_, код которого решает поставленные задачи
+[source,java]
+import java.lang.reflect.*;
+public class Reflect {
+    public static void dumpEverything(String className) {
+        try {
+            Class<?> c = Class.forName(className);
+            System.out.println("Name:  "+className);
+            Method[] m = c.getMethods();
+            System.out.println("Methods:");
+            for (Method method : m)
+                System.out.println(method.toString());
+            Field[] f = c.getDeclaredFields();
+            System.out.println("Fields:");
+            for (Field field : f)
+                System.out.println(field.toString());
+        }
+        catch (Throwable err) {
+            System.err.println(err);
+        }
+    }
+}
+
+    .. Результат работы рефлексии
+[source,java]
+Name:  Tractor
+Methods:
+public void Tractor.makeSound()
+public void Tractor.showName()
+public void Transport.responsible()
+public final void java.lang.Object.wait(long,int) throws java.lang.InterruptedException
+public final void java.lang.Object.wait() throws java.lang.InterruptedException
+public final native void java.lang.Object.wait(long) throws java.lang.InterruptedException
+public boolean java.lang.Object.equals(java.lang.Object)
+public java.lang.String java.lang.Object.toString()
+public native int java.lang.Object.hashCode()
+public final native java.lang.Class java.lang.Object.getClass()
+public final native void java.lang.Object.notify()
+public final native void java.lang.Object.notifyAll()
+
+. Collections
+    .. Был создан класс _Map_set_list_, в котором использованы _map_, _set_ и _list_
+[source,java]
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+public class Map_set_list {
+    public static String getCharForNumber(int i) {//функция чтобы найти букву по номеру
+        return i > 0 && i < 27 ? String.valueOf((char)(i + 64)) : null;
+    }
+    public static void main(String[] args) {
+        //Map
+        HashMap<Integer, String> numAndLetter = new HashMap<>();
+        for (int i = 1; i <= 5; i++) {
+            numAndLetter.put(i, getCharForNumber(i));//заполнение
+        }
+        //Set
+        HashSet<Integer> numbs = new HashSet<Integer>(numAndLetter.keySet());//создание сета и одновременно выборка данных из мапы
+        System.out.println(numbs);
+        //List
+        ArrayList<String> letters = new ArrayList<>(numAndLetter.values());//создание листа и одновременно выборка данных из мапы
+        System.out.println(letters);
+        System.out.println("Размер мапы = " + numAndLetter.size());
+        numAndLetter.clear();
+        System.out.println("Пусто = "+numAndLetter.isEmpty());
+        for (Integer i = 6; i < 8; i++) {
+            numbs.add(i);//добавление
+        }
+        System.out.println(numbs);
+        for (Integer i = 1; i <= 5; i++) {
+            numbs.remove(i);//удаление
+        }
+        System.out.println(numbs);
+        if (numbs.add(8)){//попытка добавить число, которое уже есть
+            System.out.println("Добавление.");
+        }else{
+            System.out.println("Такое число уже есть.");
+        }
+        int lSize = letters.size();//размер листа
+        System.out.println("Размер списка = "+lSize);
+        for (Integer i=1; i<3; i++){
+            letters.remove(getCharForNumber(i));//удаление элементов
+            letters.add(getCharForNumber(i));//добавление элементов
+        }
+        System.out.println(letters);
+    }
+}
+    .. Результат работы программы:
+[source,java]
+-
+[1, 2, 3, 4, 5]
+[A, B, C, D, E]
+Размер мапы = 5
+Пусто = true
+[1, 2, 3, 4, 5, 6, 7]
+[6, 7]
+Добавление.
+Размер списка = 5
+[C, D, E, A, B]
+-
+
+. Generics
+    .. Был создан _generic_ class с названием _Generic_
+[source,java]
+public class Generic <T>{
+    private T id;
+    Generic(T id){
+        this.id = id;
+    }
+    public T getId(){
+        return id;
+    }
+}
+
+    .. В следующем классе, _GenMeth_, был сделан _generic_ метод, а также, в нём вызываются методы из _Generic_.
+[source,java]
+public class GenMeth {
+    public static <T> void printT(T[] items){
+        for (T item: items){
+            System.out.print(item + " ");
+        }
+    }
+    public static void main (String args[]){
+        Generic <String> GenClass1 = new Generic<String>("lr_3");
+        String a = GenClass1.getId();
+        System.out.println(a);
+        Generic <Integer> GenClass2 = new Generic<Integer>(1);
+        Integer b = GenClass2.getId();
+        System.out.println(b);
+        GenMeth gm = new GenMeth();
+        String[] chars = {"K","E","K","LoL"};
+        Integer[] numbs = {228,22};
+        gm.printT(chars);
+        gm.printT(numbs);
+    }
+}
+    .. Результат работы:
+[source,java]
+lr_3
+1
+K E K LoL 228 22    
+
+==== 6. Вывод
+В результате выполнения лабораторной работы были изучены интерфейсы и абстрактные классы, метод _Reflection_, знакомство с коллекциями _java_ и был создан _generic_ класс и _generic_ метод и протестированы их вызовы.
+
+ 
